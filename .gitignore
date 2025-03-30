@@ -1,0 +1,9 @@
+*.iml
+
+src/main/resources/fir-flutter-codelab-be8c1-firebase-adminsdk-urvx0-8394bd3a24.json
+src/main/resources/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json
+supporters-postgis.pem
+
+./target
+/java.com
+

@@ -1,0 +1,488 @@
+openapi: 3.0.3
+info:
+  title: Champion League API
+  description: API for managing sports venues, teams, matches, leagues, and users
+  version: 1.0.0
+  contact:
+    name: Champion League Team
+
+servers:
+  - url: /v1
+    description: Base API path
+  - url: /auth
+    description: Authentication endpoints
+
+tags:
+  - name: Venues
+    description: Operations about venues
+  - name: Teams
+    description: Operations about teams
+  - name: Matches
+    description: Operations about matches
+  - name: Leagues
+    description: Operations about leagues
+  - name: Users
+    description: Operations about users
+  - name: Authentication
+    description: Authentication operations
+
+paths:
+  /venues:
+    get:
+      tags:
+        - Venues
+      summary: Get all venues
+      description: Returns a list of all available venues
+      operationId: getVenues
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Venue'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /venues/positions:
+    get:
+      tags:
+        - Venues
+      summary: Find venues by location
+      description: Returns venues near the specified geographical coordinates
+      operationId: getVenuesByPosition
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude coordinate
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: long
+          in: query
+          description: Longitude coordinate
+          required: true
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VenuePosition'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /teams:
+    get:
+      tags:
+        - Teams
+      summary: Get all teams
+      description: Returns a list of all teams
+      operationId: getTeams
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /teams/{id}:
+    get:
+      tags:
+        - Teams
+      summary: Get team by ID
+      description: Returns a single team by its ID
+      operationId: getTeamById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the team
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /matches:
+    get:
+      tags:
+        - Matches
+      summary: Get all matches
+      description: Returns a list of all matches
+      operationId: getMatches
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Match'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /matches/{uid}:
+    get:
+      tags:
+        - Matches
+      summary: Get match by ID
+      description: Returns a single match by its ID
+      operationId: getMatch
+      parameters:
+        - name: uid
+          in: path
+          description: ID of the match
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Match'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /matches/{uid}/details:
+    get:
+      tags:
+        - Matches
+      summary: Get match details
+      description: Returns detailed information about a match
+      operationId: getMatchDetails
+      parameters:
+        - name: uid
+          in: path
+          description: ID of the match
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /leagues:
+    get:
+      tags:
+        - Leagues
+      summary: Get all leagues
+      description: Returns a list of all leagues
+      operationId: getLeagues
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/League'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Returns a list of all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Users
+      summary: Add a new user
+      description: Creates a new user in the system
+      operationId: addUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User added successfully"
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{uid}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Returns a single user by their ID
+      operationId: getUser
+      parameters:
+        - name: uid
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify authentication token
+      description: Verifies the validity of an authentication token
+      operationId: verifyToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Token verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+        '400':
+          description: Token missing
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Token required"
+        '401':
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Invalid token"
+
+components:
+  schemas:
+    Venue:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "venue123"
+        address:
+          type: string
+          example: "123 Sports Avenue"
+        capacity:
+          type: integer
+          format: int32
+          example: 60000
+        city:
+          type: string
+          example: "Manchester"
+        country:
+          type: string
+          example: "United Kingdom"
+        surface:
+          type: string
+          example: "Grass"
+        image:
+          type: string
+          format: uri
+          example: "https://example.com/venue.jpg"
+
+    VenuePosition:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/Point'
+        area:
+          $ref: '#/components/schemas/Polygon'
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        founded:
+          type: integer
+        logo:
+          type: string
+          format: uri
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+        homeTeam:
+          $ref: '#/components/schemas/Team'
+        awayTeam:
+          $ref: '#/components/schemas/Team'
+        date:
+          type: string
+          format: date-time
+        venue:
+          $ref: '#/components/schemas/Venue'
+
+    MatchDetails:
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/Match'
+        statistics:
+          type: object
+          additionalProperties: true
+
+    League:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        season:
+          type: string
+        logo:
+          type: string
+          format: uri
+
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    Point:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+        coordinates:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+
+    Polygon:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Polygon]
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+              minItems: 2
+          minItems: 1
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
