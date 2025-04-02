@@ -5,7 +5,7 @@ import com.google.cloud.firestore.Firestore
 import com.google.firebase.cloud.FirestoreClient
 import jakarta.enterprise.context.ApplicationScoped
 import main.kotlin.com.supplier.championleague.model.League
-import main.kotlin.com.supplier.championleague.model.Stadium
+import main.kotlin.com.supplier.championleague.model.VenuePosition
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -38,5 +38,4 @@ class LeagueRepository {
         val leagueSnapshot = leagueCollection.document(uid).get().get()
         return if (leagueSnapshot.exists()) leagueSnapshot.data else null
     }
-
 }

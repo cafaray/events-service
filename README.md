@@ -36,6 +36,16 @@ src/main/kotlin/com/supplier/championleague/
 - **PostGIS**: Spatial database extension for geographical queries
 - **Hibernate Spatial**: JPA implementation for spatial data
 
+### About postgis
+
+PostGIS is an open source spatial database that extends the PostgreSQL database to support spatial data types and operations. It provides a set of functions and operators for working with spatial data, such as points, lines, and polygons. PostGIS is used in this project to store and query the locations of venues.
+
+The PostGIS database is hosted on a public cluster to be accessed directly by the services. The approach that we are using to deploy the database is to use a Percona Cluster. For more information in how to setup a Percona Cluster, please refer to the [our percona cluster documentation](./spatialDatabase.md).
+
+### About hibernate spatial
+
+Hibernate Spatial is a JPA implementation for spatial data. It provides a set of annotations and interfaces for working with spatial data, such as points, lines, and polygons. Hibernate Spatial is used in this project to store and query the locations of venues.
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
