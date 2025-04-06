@@ -9,6 +9,8 @@ import java.net.URL
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Venue(
     @JsonProperty("id") val id: String? = null,
+    @JsonProperty("name") val name: String? = "",
+    @JsonProperty("nickname") val nickname: String? = "",
     @JsonProperty("address") val address: String? = "",
     @JsonProperty("capacity") val capacity: Int? =0,
     @JsonProperty("city") val city: String? = "",

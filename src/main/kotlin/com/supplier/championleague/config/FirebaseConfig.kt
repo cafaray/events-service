@@ -22,14 +22,26 @@ class FirebaseConfig {
     @ConfigProperty(name = "firebase.project.id")
     lateinit var firebaseProjectId: String
 
+    @ConfigProperty(name = "quarkus.datasource.jdbc.url")
+    lateinit var quarkusDataSourceJdbcUrl: String
+
+    @ConfigProperty(name = "quarkus.datasource.username")
+    lateinit var quarkusDataSourceUsername: String
+
+    @ConfigProperty(name = "quarkus.datasource.password")
+    lateinit var quarkusDataSourcePassword: String
+
     @PostConstruct
     fun init () {
         if (FirebaseApp.getApps().isEmpty()) {
             try {
-
                 val credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
                     ?: throw IllegalStateException("GOOGLE_APPLICATION_CREDENTIALS is not set!")
                 println("*  credentialsPath: $credentialsPath \n*  projectId: $firebaseProjectId")
+                // val pgBouncerSupporterUri = System.getenv("PGBOUNCER_SUPPORTER_URI")
+                //    ?: throw IllegalStateException("PGBOUNCER_SUPPORTER_URI is not set!")
+                // println("*  pgBouncerSupporterUri: $pgBouncerSupporterUri")
+                println("*  quarkusDataSource: $quarkusDataSourceJdbcUrl, $quarkusDataSourceUsername, $quarkusDataSourcePassword")
                 // val firebaseAccount: String = StringBuilder("src/main/resources/")
                 //    .append(firebaseAccountPhonic)
                 //     .append(".json").toString()

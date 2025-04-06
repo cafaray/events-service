@@ -90,7 +90,8 @@ COPY --chown=185 target/quarkus-app/app/ /deployments/app/
 COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
 
 # COPY src/main/resources/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json /deployments/firebase-key.json
-ENV GOOGLE_APPLICATION_CREDENTIALS="/app/firebase-testmobile-key.json"
+ENV GOOGLE_APPLICATION_CREDENTIALS="/app/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json"
+# ENV GOOGLE_APPLICATION_CREDENTIALS="/app/firebase-testmobile-key.json"
 
 EXPOSE 8080
 USER 185
