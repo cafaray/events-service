@@ -48,6 +48,9 @@ hs_err_pid*
 # Firebase service accounts
 src/main/resources/*firebase-adminsdk*.json
 
+call-rest-api-sports.md
+spatialDatabase.md
+
 # OS specific
 .DS_Store
 Thumbs.db
