@@ -1,4 +1,4 @@
-# Supporters test mobile app
+# [Testing] Supporters service
 
 ## Prepare the database PostGIS
 
@@ -43,39 +43,47 @@ WHERE ST_Contains(
 );
 ```
 
-## Prepare deployment
+## Prepare deployment and testing
 
-`docker build --platform=linux/amd64 -t gcr.io/lfs261-cicd-304112/champions-league:v3 .`
-`docker build --platform=linux/amd64 -t cafaray/champions-league:v3 .`
+> Build the image using a linux adm64 platform.
 
-`docker push gcr.io/lfs261-cicd-304112/champions-league:v3`
+### Local
 
-This a complete parameters call to deploy a `cloud function`
+Recommended for local and testing porpouses:
 
-```bash
-gcloud functions deploy champions-league \
-  --gen2 \
-  --region=us-central1 \
-  --runtime=custom \
-  --trigger-http \
-  --allow-unauthenticated \
-  --entry-point=your.package.YourFunction \
-  --memory=512MB \
-  --timeout=60s \
-  --max-instances=10 \
-  --source=.
-  --docker-image=gcr.io/lfs261-cicd-304112/champions-league:v0
-```  
+`docker build --platform=linux/amd64 -t cafaray/champions-league:v1 .`
 
-### Create the secret for the service
+Push the image to the registry hub:
 
-Add the secret into the Secret Manager
+`docker push cafaray/champions-league:v1`
+
+Run the container using the docker command: 
+
+`docker run -p 8080:8080 --name champion-league \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/app/firebase-key.json" \
+  -v /Users/wendigo/workspace/champion-league/src/main/resources/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json:/app/firebase-key.json \
+  cafaray/champions-league:v1`
+
+### Cloud Function
+
+`docker build --platform=linux/amd64 -t gcr.io/lfs261-cicd-304112/champions-league:v1 .`
+
+Use the next command, and be sure you are logged to GCP and to have the right service account and permissions:
+
+`docker push gcr.io/lfs261-cicd-304112/champions-league:v1`
+
+Before deploying, you must create a secret for managing the connection with Firebase
+
+- Create the secret for the service and add the secret into the Secret Manager
+
 ```bash
 gcloud secrets create firebase-testmobile-key \
   --data-file=/Users/wendigo/workspace/champion-league/src/main/resources/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json
 ```
 
-Bind the secret to be use it for the cloud run service instance
+- Bind the secret to be use it for the cloud run service instance
+
+> considering you previously create a service account to manage the cloud function, in my case is: `cloud-run-functions@lfs261-cicd-304112.iam.gserviceaccount.com`
 
 ```bash
 gcloud secrets add-iam-policy-binding firebase-testmobile-key \
@@ -95,7 +103,7 @@ etag: BwYwZnCsu1I=
 version: 1
 ```
 
-### Deploy the function
+- Deploy the function to Cloud Run
 
 ```bash
 gcloud run deploy champions-league \
@@ -107,7 +115,9 @@ gcloud run deploy champions-league \
   --set-secrets=/app/firebase-testmobile-key.json=firebase-testmobile-key:latest
 ```
 
-If any error, be sure that locally there is no one:
+If any error, be sure that it runs locally:
+
+> be sure you are using the same image in the gcr.io
 
 ```bash
 docker run -p 8080:8080 \
@@ -116,7 +126,9 @@ docker run -p 8080:8080 \
   gcr.io/lfs261-cicd-304112/champions-league:v1
 ```
 
-## Service Account for gcr.io
+#### For private gcr.io
+
+In case you are using Kubernetes to deploy the service, and the gcr.io registry is private:
 
 - Create a new service account (or use an existing one).
 
@@ -129,10 +141,10 @@ docker run -p 8080:8080 \
 ```bash
 cat keyfile.json | docker login -u _json_key --password-stdin https://gcr.io
 
-kubectl create secret -n pggis-operator docker-registry gcr-json-key \
+kubectl create secret -n ${namespace} docker-registry gcr-json-key \
   --docker-server=gcr.io \
   --docker-username=_json_key \
-  --docker-password="$(cat ~/workspace/lfs261-cicd--gcrio-304112-54b378730613.json)" \
+  --docker-password="$(cat ~/localdir/lfs261-cicd--gcrio-304112-54b378730613.json)" \
   --docker-email=gcrio-sa-261@lfs261-cicd-304112.iam.gserviceaccount.com
 ```
 
@@ -141,17 +153,17 @@ finally, patch the service account:
 ```bash
 kubectl patch serviceaccount default \
   -p '{"imagePullSecrets":[{"name":"gcr-json-key"}]}' \
-  -n pggis-operator
+  -n ${namespace}
 ```
 
-## Firebase
+#### Connect to Firebase from external
 
 Create a secret to connect to firebase
 
 ```bash
 kubectl create secret generic firebase-config \
-  --from-file=resources/phonic-altar-450817-q4-firebase-adminsdk-fbsvc-749719c99c.json \
-  --namespace=pggis-operator
+  --from-file=~/localdir/firebase-config.json \
+  --namespace ${namespace}
 ```
 
 ## Test the service
@@ -160,7 +172,7 @@ Use a curl image to test any endpoint of the service for firebase database:
 
 ```bash
 kubectl run curl --rm -i --tty --image=curlimages/curl -- \
-    curl -v http://champion-league:8080/v1/leagues
+    curl -v http://${uri-service}:8080/v1/leagues
 ```
 
 Expected output:
@@ -176,17 +188,52 @@ If you don't see a command prompt, try pressing enter.
 pod "curl" deleted
 ```
 
-Use a curl image to test any endpoint of the service for postgres database:
+Let's try to test any endpoint of the service for postgres database:
 
 ```bash
 kubectl run curl --rm -i --tty --image=curlimages/curl -- \
-    curl -v http://champion-league:8080/v1/venues/positions\?lat\=-3.6890\&long\=40.4520
+    curl -v http://${uri-service}:8080/v1/venues/positions?lat=-3.6890&long=40.4520
 ```
 
 Expected output:
 
 ```bash
+If you don't see a command prompt, try pressing enter.
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< content-length: 74
+< 
+* Connection #0 to host champion-league left intact
+[{"id":1,"name":"Santiago Bernabéu","documentId":"kIanogZmCsx6jcBKJlpO"}]Session ended, resume using 'kubectl attach curl -c curl -i -t' command when the pod is running
+pod "curl" deleted
+```
+Finally, let's expose the service:
 
+kubectl expose deployment champion-league-deployment --type=LoadBalancer --port=80 --target-port=8080
+
+curl -i -v ${url-service}/v1/venues/positions?lat=-3.6890&long=40.4520
+
+In case you need to expose the service to public Internet, use an Ingress resource in your Kubernetes installation, here an example:
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: champion-league
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: champion-league.${kubernets_dns}.com
+      http:
+        paths:
+          - path: '/apis'
+            pathType: Prefix
+            backend:
+              service:
+                name: champion-league
+                port:
+                  number: 8080
 ```
 
 # Reference
