@@ -1,4 +1,6 @@
-# champion-league
+# Project
+
+**champion-league**
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework, to manage sports venues and their locations.
 
