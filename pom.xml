@@ -96,7 +96,7 @@
             <version>1.6.0</version>
         </dependency>
 
-        <!-- GeoJSON support -->
+        <!-- JTS Geometry (PostGIS geometry types) -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
@@ -121,14 +121,6 @@
             <artifactId>hibernate-spatial</artifactId>
             <version>6.4.1.Final</version>
         </dependency>
-
-        <!-- JTS Geometry (PostGIS geometry types) -->
-        <dependency>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts-core</artifactId>
-            <version>1.20.0</version>
-        </dependency>
-
 
         <!-- Database -->
         <dependency>

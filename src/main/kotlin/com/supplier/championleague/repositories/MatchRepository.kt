@@ -41,6 +41,25 @@ class MatchRepository {
         return null
     }
 
+    fun getMatchesByQuery(
+        date: String?, team: String?, venue: String?, league: String?, limit: Int?, offset: Int?
+    ): ArrayList<Map<String, Any>>? {
+        var query = matchCollection.limit(limit ?: 50)
+        query.select("date", "team_local", "team_visitor", "venue", "league")
+        // You can append additional where conditions if needed
+        // query.whereEqualTo("date", date)
+        query.whereEqualTo("venue", venue)
+
+        val snapshot = query.get().get()
+        val matches: List<DocumentSnapshot> = snapshot.toList()
+        val list: ArrayList<Map<String, Any>> = arrayListOf()
+        matches.forEach{
+            // println(it.data)
+            list.add(it.data!!)
+        }
+        return if(snapshot.size()>0) list else null
+    }
+
     // use `suspend fun ....` when you need a subroutine
     fun getMatchDetails(matchId: String): Map<String, Any>? {
         val matchDoc = matchCollection.document(matchId).get().get()

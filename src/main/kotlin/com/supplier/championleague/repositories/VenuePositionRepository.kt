@@ -11,6 +11,9 @@ class VenuePositionRepository: PanacheRepositoryBase<VenuePosition, Long> {
         // -3.6890, 40.4520
         // ST_DWithin(location, ST_SetSRID(ST_MakePoint(?1, ?2), 4326), ?3)" , radiusMeters
         // val radiusMeters: Double = 1000.0
-        return find("ST_Contains(location, ST_SetSRID(ST_Point(?1, ?2), 4326))", lat, long).list()
+        println("Search params: lat: $lat, long: $long")
+        val list: List<VenuePosition> = find("ST_Contains(location, ST_SetSRID(ST_Point(?1, ?2), 4326))", lat, long).list()
+        println("Found ${list.size} venue(s)")
+        return list
     }
 }

@@ -101,6 +101,15 @@ If you want to learn more about building native executables, please consult <htt
 
 ### REST
 
+```shell script
+# camp nou venue:
+curl -iv 'http://localhost:8080/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-30'
+```
+
+```shell script
+# no camp venue:
+curl -iv 'http://localhost:8080/events/inqueries?lat=2.1078&long=41.5469&date=2025-04-30'
+```
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

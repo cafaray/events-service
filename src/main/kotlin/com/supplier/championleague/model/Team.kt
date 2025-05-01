@@ -9,6 +9,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection
 data class Team(
     @JsonProperty("id") val id: String? = "",
     @JsonProperty("country") val country: String? = "",
+    @JsonProperty("crest") val crest: String? = "",
     @JsonProperty("location") val location: String?= "",
     @JsonProperty("name") val name: String? = "",
     @JsonProperty("nicknames") val nickname: Array<String>? = null,
