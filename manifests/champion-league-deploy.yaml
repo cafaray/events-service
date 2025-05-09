@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: champion-league-deployment
+  name: champion-league
   labels:
     run: champion-league
 spec:
@@ -17,7 +17,8 @@ spec:
       imagePullSecrets:
         - name: gcr-json-key
       containers:
-      - image: cafaray/champions-league:v6.5.13
+      # - image: cafaray/champions-league:v7.2.3
+      - image: cafaray/champions-league:v7.2.3
         name: champion-league
         ports:
         - containerPort: 8080

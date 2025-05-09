@@ -5,6 +5,7 @@ import com.google.cloud.firestore.DocumentSnapshot
 import com.google.cloud.firestore.Firestore
 import com.google.firebase.cloud.FirestoreClient
 import com.supplier.championleague.model.Event
+import com.supplier.championleague.model.EventType
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import main.kotlin.com.supplier.championleague.model.League
@@ -35,6 +36,7 @@ class EventRepository (private val venuePositionRepository: VenuePositionReposit
     fun queryEvents(
         lat: Double?, long: Double?, date: String?, limit: Int?, offset: Int?
     ): ArrayList<Map<String, Any>?>?{
+        println("Starting queryEvents with Search params: lat: $lat, long: $long, date: $date, limit: $limit, offset: $offset")
         var query = eventCollection.limit(limit ?: 50)
         var data: MutableMap<String, Any> = mutableMapOf()
         // You can append additional where conditions if needed
@@ -42,19 +44,19 @@ class EventRepository (private val venuePositionRepository: VenuePositionReposit
         venuePositionRepository.findByLocation(lat ?: 0.0, long ?: 0.0)?.forEach {it ->
             println("venue: ${it.documentId}")
             println("Looking for a match with date: $date and venue: ${it.documentId}")
+            var details: MutableMap<String, Any> = mutableMapOf()
             matchRepository.getMatchesByQuery(venue=it.documentId, date=date, limit=limit, offset=offset, league = null, team = null)?.forEach {
                 //query = query.whereEqualTo("matchId", it["id"])
-                val venueData = (it["venue"] as DocumentReference).get().get().data
-                val leagueData = (it["league"] as DocumentReference).get().get().data
-                val teamLocal =  (it["team_local"] as DocumentReference).get().get() // .data
-                val teamSimpleLocal = teamLocal.toObject(TeamSimple::class.java)
-                val teamVisitor =  (it["team_visitor"] as DocumentReference).get().get() // .data
-                val teamSimpleVisitor = teamVisitor.toObject(TeamSimple::class.java)
+
                 data["date"] = it["date"] as String
-                data["team_local"] = teamSimpleLocal as TeamSimple
-                data["team_visitor"] = teamSimpleVisitor as TeamSimple
-                data["venue"] = venueData as Map<String, Any>
-                data["league"] = leagueData as Map<String, Any>
+                data["type"] = EventType.MATCH.toString() as String
+                data["name"] = it["name"] as String
+                    details["id"] = it["id"] as String
+                    details["team_local"] = it["team_local"] as TeamSimple
+                    details["team_visitor"] = it["team_visitor"] as TeamSimple
+                    details["venue"] = it["venue"] as Map<String, Any>
+                    details["league"] = it["league"] as Map<String, Any>
+                data["details"] = details as Map<String, Any>
             }
             // query = query.whereEqualTo("venue", it.documentId)
         }

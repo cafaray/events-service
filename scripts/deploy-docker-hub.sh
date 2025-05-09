@@ -24,8 +24,8 @@ echo "***   That took ${DURATION} seconds"
 
 echo "***   deploying to kubernetes using image cafaray/champions-league:$version"
 
-sed -i '' "s|image:.*|image: cafaray/champions-league:$version|" manifests/champion-league-pod.yaml
-echo "***   Ready to run $(cat manifests/champion-league-pod.yaml)"
-kubectl delete pods champion-league -n pggis-operator
-kubectl apply -f manifests/champion-league-pod.yaml -n pggis-operator
+sed -i '' "s|image:.*|image: cafaray/champions-league:$version|" manifests/champion-league-deploy.yaml
+echo "***   Ready to run $(cat manifests/champion-league-deploy.yaml)"
+kubectl delete deploy champion-league -n pggis-operator
+kubectl apply -f manifests/champion-league-deploy.yaml -n pggis-operator
 kubectl get pods -n pggis-operator champion-league -w

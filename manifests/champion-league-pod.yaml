@@ -8,7 +8,7 @@ spec:
   imagePullSecrets:
     - name: gcr-json-key
   containers:
-  - image: cafaray/champions-league:v6.5.13
+  - image: cafaray/champions-league:v7.2.2
     name: champion-league
     ports:
     - containerPort: 8080

@@ -2,6 +2,7 @@ package com.supplier.championleague.controller
 
 import com.supplier.championleague.service.EventService
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -9,9 +10,9 @@ import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 
-@ApplicationScoped
-@Path("/events")
+@Path("/v1/events")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class EventController (private val eventService: EventService) {
 
     @GET

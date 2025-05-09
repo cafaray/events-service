@@ -97,13 +97,20 @@ You can then execute your native executable with: `./target/champion-league-1.0.
 
 If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
 
+### Build and push to docker hub
+
+`docker build -f src/main/docker/Dockerfile.jvm --platform=linux/amd64 -t cafaray/champions-league:${version} .`
+
+
 ## Provided Code
 
 ### REST
 
 ```shell script
+export BASE_URL=http://localhost:8080
+export BASE_URL_REMOTE=http://champion-league.e9bb0838-6437-45ef-847c-e04a5df6f617.k8s.civo.com
 # camp nou venue:
-curl -iv 'http://localhost:8080/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-30'
+curl -iv "${BASE_URL}/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-30"
 ```
 
 ```shell script
