@@ -24,12 +24,113 @@ src/main/kotlin/com/supplier/championleague/
 
 ### Key Components
 
-- **Venue Management**: Handles basic venue information including address, capacity, and facilities
-- **Spatial Operations**: Supports geographical queries to find venues by location
-- **REST API Endpoints**:
-  - `GET /v1/venues`: Retrieve all venues
-  - `GET /v1/venues/positions?lat=&long=`: Find venues by geographical coordinates
+- Quarkus application is the main entry point for the application. It contains the main method that starts the application and routes requests to the appropriate controller methods.
 
+- Dockerfile is used to build a Docker image for the application.
+
+- Databases:  
+  - PostgreSQL database for storing venue information.
+  - PostGIS database for storing spatial data.
+  - Firebase for all documents.
+
+- Deployment script is used to deploy the application to a Kubernetes cluster. The cluster is configured at Civo account.
+
+Architecture:
+![img.png](_resources/components_architecture.png)
+
+## API Documentation
+
+Refer to the [Champion League API documentation](./api/README.md) for information about the available endpoints and their usage.
+
+### Authentication
+
+- `POST /auth/verify`
+  - Verify JWT token
+  - Request body: `{ "token": "your-jwt-token" }`
+  - Response: `{ "uid": "user-id" }` or error message
+
+### Users
+
+- `POST /v1/users`
+  - Create a new user
+  - Request body: `{ "id": "uid", "name": "username", "email": "user@example.com" }`
+  - Response: `{ "message": "User added successfully" }`
+
+- `GET /v1/users`
+  - Get all users
+  - Response: Array of user objects
+
+- `GET /v1/users/{uid}`
+  - Get user by ID
+  - Response: User object or 404 if not found
+
+### Teams
+
+- `GET /v1/teams`
+  - Get all teams
+  - Response: Array of team objects
+
+- `GET /v1/teams/{id}`
+  - Get team by ID
+  - Response: Team object or 404 if not found
+
+### Leagues
+
+- `GET /v1/leagues`
+  - Get all leagues
+  - Response: Array of league objects
+
+### Matches
+
+- `GET /v1/matches`
+  - Get all matches
+  - Response: Array of match objects
+
+- `GET /v1/matches/{uid}`
+  - Get match by ID
+  - Response: Match object or 404 if not found
+
+- `GET /v1/matches/{uid}/details`
+  - Get detailed match information (including venue, teams, and league)
+  - Response: Detailed match information or 404 if not found
+
+### Events
+
+- `GET /v1/events`
+  - Get all events
+  - Response: Array of event objects
+
+- `GET /v1/events/inqueries`
+  - Search events by location and date
+  - Query parameters:
+    - `lat`: Latitude (optional)
+    - `long`: Longitude (optional)
+    - `date`: Date (optional)
+    - `limit`: Maximum results (optional)
+    - `offset`: Result offset (optional)
+  - Response: Array of event objects or 404 if not found
+
+### Venues
+
+- `GET /v1/venues`
+  - Get all venues
+  - Response: Array of venue objects
+
+- `GET /v1/venues/positions`
+  - Search venues by geographical coordinates
+  - Query parameters:
+    - `lat`: Latitude
+    - `long`: Longitude
+  - Response: Array of venue objects or 404 if not found
+
+### Response Format
+
+All endpoints return JSON responses with the following status codes:
+- 200: Success
+- 400: Bad Request (invalid input)
+- 401: Unauthorized (invalid token)
+- 404: Not Found
+- 500: Internal Server Error
 ### Technologies Used
 
 - **Quarkus**: Main framework
@@ -117,6 +218,4 @@ curl -iv "${BASE_URL}/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-3
 # no camp venue:
 curl -iv 'http://localhost:8080/events/inqueries?lat=2.1078&long=41.5469&date=2025-04-30'
 ```
-Easily start your REST Web Services
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
