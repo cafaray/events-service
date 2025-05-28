@@ -11,18 +11,16 @@ The project follows a clean architecture pattern with the following structure:
 ```plaintext
 src/main/kotlin/com/supplier/championleague/
 ├── controller/
-│   └── VenueController.kt       # REST endpoints for venue operations
+│   └── {{RESOURCE}}Controller.kt       # REST endpoints for venue operations
 ├── service/
-│   └── VenueService.kt          # Business logic layer
+│   └── {{RESOURCE}}Service.kt          # Business logic layer
 ├── repositories/
-│   ├── VenueRepository.kt       # Data access for venue information
-│   └── VenuePositionRepository.kt # Spatial data operations for venues
+│   ├── {{RESOURCE}}Repository.kt       # Data access for venue information
 └── model/
-    ├── Venue.kt                 # Core venue data model
-    └── VenuePosition.kt         # Spatial data model for venue locations
+    ├── {{RESOURCE}}.kt                 # Core venue data model
 ```
 
-### Key Components
+## Key Components
 
 - Quarkus application is the main entry point for the application. It contains the main method that starts the application and routes requests to the appropriate controller methods.
 
@@ -35,8 +33,26 @@ src/main/kotlin/com/supplier/championleague/
 
 - Deployment script is used to deploy the application to a Kubernetes cluster. The cluster is configured at Civo account.
 
-Architecture:
+### Architecture:
 ![img.png](_resources/components_architecture.png)
+
+### Technologies Used
+
+- **Quarkus**: Main framework
+- **Kotlin**: Programming language
+- **Firebase/Firestore**: Document database for venue data
+- **PostGIS**: Spatial database extension for geographical queries
+- **Hibernate Spatial**: JPA implementation for spatial data
+
+#### About postgis
+
+PostGIS is an open source spatial database that extends the PostgreSQL database to support spatial data types and operations. It provides a set of functions and operators for working with spatial data, such as points, lines, and polygons. PostGIS is used in this project to store and query the locations of venues.
+
+The PostGIS database is hosted on a public cluster to be accessed directly by the services. The approach that we are using to deploy the database is to use a Percona Cluster. For more information in how to setup a Percona Cluster, please refer to the [our percona cluster documentation](./spatialDatabase.md).
+
+#### About hibernate spatial
+
+Hibernate Spatial is a JPA implementation for spatial data. It provides a set of annotations and interfaces for working with spatial data, such as points, lines, and polygons. Hibernate Spatial is used in this project to store and query the locations of venues.
 
 ## API Documentation
 
@@ -131,23 +147,6 @@ All endpoints return JSON responses with the following status codes:
 - 401: Unauthorized (invalid token)
 - 404: Not Found
 - 500: Internal Server Error
-### Technologies Used
-
-- **Quarkus**: Main framework
-- **Kotlin**: Programming language
-- **Firebase/Firestore**: Document database for venue data
-- **PostGIS**: Spatial database extension for geographical queries
-- **Hibernate Spatial**: JPA implementation for spatial data
-
-### About postgis
-
-PostGIS is an open source spatial database that extends the PostgreSQL database to support spatial data types and operations. It provides a set of functions and operators for working with spatial data, such as points, lines, and polygons. PostGIS is used in this project to store and query the locations of venues.
-
-The PostGIS database is hosted on a public cluster to be accessed directly by the services. The approach that we are using to deploy the database is to use a Percona Cluster. For more information in how to setup a Percona Cluster, please refer to the [our percona cluster documentation](./spatialDatabase.md).
-
-### About hibernate spatial
-
-Hibernate Spatial is a JPA implementation for spatial data. It provides a set of annotations and interfaces for working with spatial data, such as points, lines, and polygons. Hibernate Spatial is used in this project to store and query the locations of venues.
 
 ## Running the application in dev mode
 
@@ -200,12 +199,12 @@ If you want to learn more about building native executables, please consult <htt
 
 ### Build and push to docker hub
 
-`docker build -f src/main/docker/Dockerfile.jvm --platform=linux/amd64 -t cafaray/champions-league:${version} .`
+`docker build -f src/main/docker/Dockerfile.jvm --platform=linux/amd64 -t {{hub_account}}/champions-league:${version} .`
 
 
-## Provided Code
+## Code Example
 
-### REST
+### REST invokation using `curl`
 
 ```shell script
 export BASE_URL=http://localhost:8080
