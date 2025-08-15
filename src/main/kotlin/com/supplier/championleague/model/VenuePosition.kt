@@ -36,11 +36,6 @@ data class VenuePosition (
     @Column(name = "location", columnDefinition = "geometry(Polygon, 4326)")
     var location: Polygon? = null,
 
-    /*
-    @Column(name = "location", columnDefinition = "geometry")
-    @JdbcTypeCode(SqlTypes.GEOMETRY)
-    var location: Point? = null,
-    */
     @Column(name = "document_id")
     var documentId: String? = null
 )
