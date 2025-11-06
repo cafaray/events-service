@@ -1,5 +1,6 @@
-package main.kotlin.com.supplier.championleague.model
 
+package main.kotlin.com.supplier.championleague.model
+/*
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
@@ -39,3 +40,4 @@ data class VenuePosition (
     @Column(name = "document_id")
     var documentId: String? = null
 )
+*/

@@ -9,8 +9,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection
 data class League(
     @JsonProperty("id") val id: String? = null,
     @JsonProperty("name") val name: String? = "",
-    @JsonProperty("teams") val teams: List<String>? = null,
-    @JsonProperty("nickname") val short_name: String? = "",
     @JsonProperty("origin") val origin: Int? = null,
-    @JsonProperty("region") val region: String? = null
+    @JsonProperty("region") val region: String? = null,
+    @JsonProperty("shortName") val short_name: String? = "",
+    @JsonProperty("teams") val teams: List<String>? = null
 )

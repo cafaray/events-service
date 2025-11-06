@@ -1,11 +1,11 @@
-package com.supplier.championleague.repositories
+package main.kotlin.com.supplier.championleague.repositories
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
-import com.supplier.championleague.model.serializer.VenueResponse
+import main.kotlin.com.supplier.championleague.model.serializer.VenueResponse
 import org.jboss.resteasy.reactive.RestResponse;
 
 @Path("/venue-searchpos-service")

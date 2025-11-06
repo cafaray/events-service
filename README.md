@@ -218,3 +218,8 @@ curl -iv "${BASE_URL}/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-3
 curl -iv 'http://localhost:8080/events/inqueries?lat=2.1078&long=41.5469&date=2025-04-30'
 ```
 
+### Test data
+
+Camp Nou: long=2.1202395&lat=41.3809&maxDistance=1000
+
+

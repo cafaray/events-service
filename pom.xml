@@ -123,6 +123,7 @@
         </dependency>
 
         <!-- JTS Geometry (PostGIS geometry types) -->
+        <!--
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
@@ -133,22 +134,27 @@
             <artifactId>jts-io-common</artifactId>
             <version>1.20.0</version>
         </dependency>
-        
+        -->
+
         <!-- Hibernate Spatial -->
+        <!--
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <version>6.4.4.Final</version>
         </dependency>
-
+        -->
+        
         <!-- Hibernate Spatial Core -->
+        <!--
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <version>6.4.1.Final</version>
         </dependency>
-
+        -->
         <!-- Database -->
+        <!--
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache-kotlin</artifactId>
@@ -157,7 +163,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
-
+        -->
         <!-- https://mvnrepository.com/artifact/org.eclipse.microprofile.rest.client/microprofile-rest-client-api -->
         <dependency>
             <groupId>org.eclipse.microprofile.rest.client</groupId>

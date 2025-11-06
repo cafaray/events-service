@@ -1,5 +1,6 @@
 version=$1
 compile=$2
+deploy=$3
 STARTTIME=`date +%s`
 echo "***   `date`: Starting the script."
 if [ "$compile" = "compile" ]; then
@@ -17,15 +18,17 @@ docker build \
     -t cafaray/champions-league:$version .
 echo "***   new image is ready to push: cafaray/champions-league:$version";
 docker push cafaray/champions-league:$version
-echo "***   `date`: The script has finished."
+echo "***   `date`: CI has finished."
 ENDTIME=`date +%s`
 let DURATION=${ENDTIME}-${STARTTIME}
 echo "***   That took ${DURATION} seconds"
 
-echo "***   deploying to kubernetes using image cafaray/champions-league:$version"
+if [ "$deploy" = "deploy" ]; then    
+    echo "***   deploying to kubernetes using image cafaray/champions-league:$version"
 
-sed -i '' "s|image:.*|image: cafaray/champions-league:$version|" manifests/champion-league-deploy.yaml
-echo "***   Ready to run $(cat manifests/champion-league-deploy.yaml)"
-kubectl delete deploy champion-league -n pggis-operator
-kubectl apply -f manifests/champion-league-deploy.yaml -n pggis-operator
-kubectl get pods -n pggis-operator champion-league -w
+    sed -i '' "s|image:.*|image: cafaray/champions-league:$version|" manifests/champion-league-deploy.yaml
+    echo "***   Ready to run $(cat manifests/champion-league-deploy.yaml)"
+    kubectl delete deploy champion-league -n pggis-operator
+    kubectl apply -f manifests/champion-league-deploy.yaml -n pggis-operator
+    kubectl get pods -n pggis-operator champion-league -w
+fi

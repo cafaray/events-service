@@ -16,7 +16,7 @@ class MatchController (private val matchService: MatchService) {
     @GET
     fun getMatches(): Response {
         val matches = matchService.getMatches()
-        return if (matches!!.size>0){
+        return if (!matches.isNullOrEmpty()){
             Response.ok(matches).build()
         } else {
             Response.status(404).entity(mapOf("error" to "Matches don't found")).build()

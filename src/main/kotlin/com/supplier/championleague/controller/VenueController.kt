@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.WebApplicationException
 import main.kotlin.com.supplier.championleague.service.VenueService
-import com.supplier.championleague.model.serializer.VenueResponse
+import main.kotlin.com.supplier.championleague.model.serializer.VenueResponse
 
 
 @Path("/v1/venues")
@@ -26,17 +26,14 @@ class VenueController (private val venueService: VenueService) {
         @QueryParam("maxDistance") maxDistance: Int
     ): List<VenueResponse> {
         return venueService.findNearby(lat, long, maxDistance)
-            ?: throw WebApplicationException("No nearby venues found", Response.Status.NOT_FOUND)        
     }
 
     @GET
     fun getVenues(): Response {
         try {
             val venues = venueService.getVenues()
-            return if (venues != null)
-                Response.ok(venues).build()
-            else
-                Response.status(404).entity(mapOf("error" to "Venues not found")).build()
+            return venues?.let { Response.ok(it).build() }
+                ?: Response.status(404).entity(mapOf("error" to "Venues not found")).build()
         } catch (e: Exception) {
             return Response.status(500).entity(mapOf("error" to e.message)).build()
         }

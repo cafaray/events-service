@@ -1,5 +1,5 @@
 package main.kotlin.com.supplier.championleague.repositories
-
+/*
 import jakarta.enterprise.context.ApplicationScoped
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepositoryBase
 import main.kotlin.com.supplier.championleague.model.VenuePosition
@@ -20,3 +20,4 @@ class VenuePositionRepository: PanacheRepositoryBase<VenuePosition, Long> {
         return list
     }
 }
+ */

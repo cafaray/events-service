@@ -13,93 +13,105 @@ import main.kotlin.com.supplier.championleague.model.toMap
 class MatchRepository {
 
     private val db: Firestore = FirestoreClient.getFirestore()
-    private val matchCollection = db.collection("matchs")
+    private val matchCollection = db.collection("matches")
 
-    fun getMatches(): ArrayList<Map<String, Any>>? {
-        val matchSnapshot = matchCollection.get().get()
+    fun getMatches(limit: Int?=25, offset: Int?=1): ArrayList<Map<String, Any>>? {
+        
+        val query = matchCollection.limit(limit ?:50) // .offset(offset ?:1)
+        val matchSnapshot = query.get().get()
         val matches: List<DocumentSnapshot> = matchSnapshot.toList()
         val list: ArrayList<Map<String, Any>> = arrayListOf()
         matches.forEach{
-            val matchSimple = it.toObject(Match::class.java)
-            matchSimple?.id = it.reference.id
-            //list.add(it.data!!)
-            if (matchSimple != null) {
-                list.add(matchSimple.toMap())
+            println("match: ${it.reference.id} => ${it.data}")
+            val data = it.data
+            if (data != null) {
+                val match = Match(
+                    id = it.reference.id,
+                    team_id_1 = (data["team_id_1"] as? DocumentReference)?.id,
+                    team_id_2 = (data["team_id_2"] as? DocumentReference)?.id
+                )
+                list.add(match.toMap())
             }
         }
         return if(matchSnapshot.size()>0) list else null
     }
 
+    /***
+     * getMatch 
+     * Parameters: uid = Unique identifier
+     * Return a simple Map object with the referenced Ids
+     */
     fun getMatch(uid: String): Map<String, Any>? {
         val matchSnapshot = matchCollection.document(uid).get().get()
         if (matchSnapshot.exists()){
-            val matchSimple = matchSnapshot.toObject(Match::class.java)
-            //val matchSimple = matchSnapshot.toMap()
-            matchSimple?.id = matchSnapshot.id
-            return matchSimple?.toMap()
-        }
+            val data = matchSnapshot.data!!
+            val match = Match(
+                id = matchSnapshot.id,
+                team_id_1 = (data["team_id_1"] as? DocumentReference)?.id,
+                team_id_2 = (data["team_id_2"] as? DocumentReference)?.id
+            )
+            return match.toMap()
+        }        
         return null
     }
+    
+    fun getMatchDetailed(uid: String): Map<String, Any>? {
+        val matchSnapshot = matchCollection.document(uid).get().get()
+        val matchData = matchSnapshot.data ?: return null     
+        if (matchSnapshot.exists()){
+            val response: MutableMap<String, Any> = mutableMapOf()            
+            
+            val teamId1 =  (matchData["team_id_1"] as DocumentReference).get().get() // .data
+            val teamId1Simple = teamId1.toObject(TeamSimple::class.java)
+            teamId1Simple?.id = teamId1.reference.id
 
-    fun getMatchesByQuery(
-        date: String?, team: String?, venue: String?, league: String?, limit: Int?, offset: Int?
-    ): ArrayList<Map<String, Any>>? {
-        var query = matchCollection.limit(limit ?: 50)
-        query.select("date", "team_local", "team_visitor", "venue", "league")
+            val teamId2 =  (matchData["team_id_2"] as DocumentReference).get().get() // .data            
+            val teamId2Simple = teamId2.toObject(TeamSimple::class.java)
+            teamId2Simple?.id = teamId2.reference.id
+            
+            response["id"] = uid
+            response["team_id_1"] = teamId1Simple as TeamSimple
+            response["team_id_2"] = teamId2Simple as TeamSimple
+                        
+            return response
+        }        
+        return null
+    }    
+
+    /***
+     * getMatchesByQuery
+     * params: team_id, limit, offset
+     * Returns a List of detailed object matches where the team_id is present
+     */
+    fun getMatchesByQuery(team_id: String?, limit: Int?, offset: Int?): ArrayList<Map<String, Any>>? {
+        var query = matchCollection.limit(limit ?: 50).offset(offset ?: 1)
+        query.select("team_id_1", "team_id_2")
         // You can append additional where conditions if needed
-        query.whereEqualTo("date", date)
-        query.whereEqualTo("venue", venue)
-
-        val snapshot = query.get().get()
-        val matches: List<DocumentSnapshot> = snapshot.toList()
+        query.whereEqualTo("team_id_1", team_id)
+        query.whereEqualTo("team_id_2", team_id)
+        val matchSnapshot = query.get().get()
+        val matches: List<DocumentSnapshot> = matchSnapshot.toList()
         val list: ArrayList<Map<String, Any>> = arrayListOf()
         val data: MutableMap<String, Any> = mutableMapOf()
         matches.forEach{
             // println(it.data)
             //list.add(it.data!!)
-            val venueData = (it["venue"] as DocumentReference).get().get().data
-            val leagueData = (it["league"] as DocumentReference).get().get().data
-            val teamLocal =  (it["team_local"] as DocumentReference).get().get() // .data
-            val teamSimpleLocal = teamLocal.toObject(TeamSimple::class.java)
-            teamSimpleLocal?.id = teamLocal.reference.id
-            val teamVisitor =  (it["team_visitor"] as DocumentReference).get().get() // .data
-            val teamSimpleVisitor = teamVisitor.toObject(TeamSimple::class.java)
-            teamSimpleVisitor?.id = teamVisitor.reference.id
-            data["date"] = it["date"] as String
-            data["name"] = it["name"] as String
-            data["status"] = it["status"] as String
-            data["team_local"] = teamSimpleLocal as TeamSimple
-            data["team_visitor"] = teamSimpleVisitor as TeamSimple
-            data["venue"] = venueData as Map<String, Any>
-            data["league"] = leagueData as Map<String, Any>
-            data["summary"] = it["summary"] as Map<String, Any>
+            
+            val teamId1 =  (it["team_id_1"] as DocumentReference).get().get() // .data
+            val teamId1Simple = teamId1.toObject(TeamSimple::class.java)
+            teamId1Simple?.id = teamId1.reference.id
+
+            val teamId2 =  (it["team_id_2"] as DocumentReference).get().get() // .data            
+            val teamId2Simple = teamId2.toObject(TeamSimple::class.java)
+            teamId2Simple?.id = teamId2.reference.id
+            
+            data["team_id_1"] = teamId1Simple as TeamSimple
+            data["team_id_2"] = teamId2Simple as TeamSimple
 
             data["id"] = it.reference.id as String
             list.add(data)
         }
-        return if(snapshot.size()>0) list else null
+        return if(matchSnapshot.size()>0) list else null
     }
 
-    // use `suspend fun ....` when you need a subroutine
-    fun getMatchDetails(matchId: String): Map<String, Any>? {
-        val matchDoc = matchCollection.document(matchId).get().get()
-        if (!matchDoc.exists()) return null
-        val matchData = matchDoc.data ?: return null
-        val venueData = (matchData["venue"] as DocumentReference).get().get().data
-        val leagueData = (matchData["league"] as DocumentReference).get().get().data
-        val teamLocal =  (matchData["team_local"] as DocumentReference).get().get() // .data
-        val teamSimpleLocal = teamLocal.toObject(TeamSimple::class.java)
-        val teamVisitor =  (matchData["team_visitor"] as DocumentReference).get().get() // .data
-        val teamSimpleVisitor = teamVisitor.toObject(TeamSimple::class.java)
-        return if (venueData!=null && leagueData!=null && teamSimpleLocal!=null && teamSimpleVisitor!=null) {
-            (matchData
-                + ("venue" to venueData)
-                + ("league" to leagueData)
-                + ("team_local" to teamSimpleLocal)
-                + ("team_visitor" to teamSimpleVisitor)
-            )
-        }else {
-            return matchData
-        }
-    }
 }

@@ -10,11 +10,11 @@ data class Team(
     @JsonProperty("id") val id: String? = "",
     @JsonProperty("country") val country: String? = "",
     @JsonProperty("crest") val crest: String? = "",
+    @JsonProperty("foundation") val foundation: Int?,
     @JsonProperty("location") val location: String?= "",
     @JsonProperty("name") val name: String? = "",
-    @JsonProperty("nicknames") val nickname: Array<String>? = null,
-    @JsonProperty("shortname") val short_name: Array<String>? = null,
-    @JsonProperty("stadium") val stadiumId: String? = null,
-    @JsonProperty("origin") val origin: Int? = null,
+    @JsonProperty("nickNames") val nickname: Array<String>? = null,
+    @JsonProperty("shortName") val short_name: String? = null,
+    @JsonProperty("venue") val venue: Map<String, Any>? = null,
+    
 )
-

@@ -9,12 +9,14 @@ import java.net.URL
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Venue(
     @JsonProperty("id") val id: String? = null,
-    @JsonProperty("name") val name: String? = "",
-    @JsonProperty("nickname") val nickname: String? = "",
     @JsonProperty("address") val address: String? = "",
     @JsonProperty("capacity") val capacity: Int? =0,
     @JsonProperty("city") val city: String? = "",
+    @JsonProperty("club") val club: String? = "",
     @JsonProperty("country") val country: String? = "",
+    @JsonProperty("image") val image: URL? = null,
+    @JsonProperty("name") val name: String? = "",
+    @JsonProperty("nickname") val nickname: String? = "",
+    @JsonProperty("foundation") val foundation: Int?,
     @JsonProperty("surface") val surface: String? = "",
-    @JsonProperty("image") val image: URL? = null
 )

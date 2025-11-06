@@ -1,6 +1,6 @@
-package com.supplier.championleague.repositories
-
-import com.supplier.championleague.model.serializer.VenueResponse
+//package com.supplier.championleague.repositories
+package main.kotlin.com.supplier.championleague.repositories
+import main.kotlin.com.supplier.championleague.model.serializer.VenueResponse
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import jakarta.enterprise.context.ApplicationScoped
@@ -16,62 +16,38 @@ class VenueSearchPosRepository @Inject constructor(
     @RestClient private val httpClient: VenueSearchPosRestClient
 ) {
     fun getNearby(lat: Double, long: Double, maxDistance: Int): List<VenueResponse> {
-        println("Fetching nearby venues for lat: $lat, long: $long, maxDistance: $maxDistance")
+        println("** Fetching nearby venues for:\n-> lat: $lat,\n-> long: $long,\n-> maxDistance: $maxDistance")
 
         return try {            
-            // Call REST client
             val response = httpClient.getNearby(lat, long, maxDistance)
-            println("StatusCode: ${response.statusInfo}")
-            println("entity: ${response.getEntity()}")
-            // println("Body: {resposne.body}")
-            val rawVenues = response.getEntity() ?: emptyList()
-            println("Body: ${rawVenues}")
             
-            // Map to VenueResponse
-            // rawVenues.map { raw ->
-            //    VenueResponse(
-            //        name = raw.name ?: "Unknown",
-            //        capacity = raw.capacity ?: 0,
-            //        city = raw.city ?: "Unknown",
-            //        coat_of_arms = raw.coat_of_arms,
-            //        country = raw.country ?: "Unknown",
-            //        founded = raw.founded,
-            //        _id = raw._id
-            //    )
-            // }
-            // emptyList()
-            // Debug print
-            println("✅ Received ${rawVenues.size} venues from remote service")
-            rawVenues.forEachIndexed { index, venue ->
-                println("[$index] Raw venue: $venue")
+            if (response.status >= 400) {
+                println("❌ API returned error status: ${response.status}")
+                return emptyList()
             }
-            rawVenues
-            // Map to VenueResponse
-            //rawVenues.map { raw ->
-            //    VenueResponse(
-            //        name = raw.name ?: "Unknown",
-            //        capacity = raw.capacity ?: 0,
-            //        city = raw.city ?: "Unknown",
-            //        coat_of_arms = raw.coat_of_arms,
-            //        country = raw.country ?: "Unknown",
-            //        founded = raw.founded,
-            //        _id = raw._id
-            //    )
+            
+            val rawVenues = response.getEntity() ?: emptyList()
+            println("✅ Received ${rawVenues.size} venues from remote service")
+            println("✅ Received ${rawVenues} venues from remote service")
+            rawVenues.map { raw ->
+                VenueResponse(
+                    name = raw.name,
+                    capacity = raw.capacity,
+                    city = raw.city,
+                    coat_of_arms = raw.coat_of_arms,
+                    country = raw.country,
+                    founded = raw.founded,
+                    venue_id = raw.venue_id
+                )
+            }
             
         } catch (e: ClientWebApplicationException) {
-            System.err.println("❌ Error calling VenueSearch API")
-            e.printStackTrace()
-
+            println("❌ VenueSearch API error: ${e.response?.status} - ${e.message}")
             emptyList()
         } catch (e: Exception) {
-            System.err.println("❌ Unexpected error: ${e.message}")
-            e.printStackTrace()
+            println("❌ Unexpected error in venue search: ${e.message}")
             emptyList()
         }
-    
-        
 
-
-        // return httpClient.getNearby(lat, long, maxDistance)
     }
 }

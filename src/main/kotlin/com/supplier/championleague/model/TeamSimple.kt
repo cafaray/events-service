@@ -11,7 +11,6 @@ data class TeamSimple(
     @JsonProperty("crest") var crest: String? = "",
     @JsonProperty("country") val country: String? = "",
     @JsonProperty("location") val location: String?= "",
-    @JsonProperty("name") val name: String? = "",
-    @JsonProperty("nicknames") val nickname: List<String>? = null,
-    @JsonProperty("shortname") val short_name: String? = null,
+    @JsonProperty("name") val name: String? = "",    
+    @JsonProperty("shortName") val short_name: String? = null,
 )

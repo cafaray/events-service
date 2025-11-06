@@ -22,6 +22,7 @@ class FirebaseConfig {
     @ConfigProperty(name = "firebase.project.id")
     lateinit var firebaseProjectId: String
 
+    /* Removed properties related to database connection for clarity
     @ConfigProperty(name = "quarkus.datasource.jdbc.url")
     lateinit var quarkusDataSourceJdbcUrl: String
 
@@ -30,7 +31,8 @@ class FirebaseConfig {
 
     @ConfigProperty(name = "quarkus.datasource.password")
     lateinit var quarkusDataSourcePassword: String
-
+    */
+    
     @PostConstruct
     fun init () {
         if (FirebaseApp.getApps().isEmpty()) {
@@ -41,7 +43,9 @@ class FirebaseConfig {
                 // val pgBouncerSupporterUri = System.getenv("PGBOUNCER_SUPPORTER_URI")
                 //    ?: throw IllegalStateException("PGBOUNCER_SUPPORTER_URI is not set!")
                 // println("*  pgBouncerSupporterUri: $pgBouncerSupporterUri")
-                println("*  quarkusDataSource: $quarkusDataSourceJdbcUrl, $quarkusDataSourceUsername, $quarkusDataSourcePassword")
+
+                // println("*  quarkusDataSource: $quarkusDataSourceJdbcUrl, $quarkusDataSourceUsername, $quarkusDataSourcePassword")
+                
                 // val firebaseAccount: String = StringBuilder("src/main/resources/")
                 //    .append(firebaseAccountPhonic)
                 //     .append(".json").toString()

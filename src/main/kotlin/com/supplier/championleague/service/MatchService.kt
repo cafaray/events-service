@@ -15,7 +15,7 @@ class MatchService (val matchRepository: MatchRepository) {
     }
 
     fun getMatchDetails(uid: String): Map<String, Any>? {
-        return matchRepository.getMatchDetails(uid)
+        return matchRepository.getMatchDetailed(uid)
     }
 
 }
