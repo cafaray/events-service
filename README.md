@@ -222,4 +222,18 @@ curl -iv 'http://localhost:8080/events/inqueries?lat=2.1078&long=41.5469&date=20
 
 Camp Nou: long=2.1202395&lat=41.3809&maxDistance=1000
 
-
+```bash
+curl -X POST \
+  http://localhost:8080/v1/events/songs/Jryl1EqgyGSqZqilowPX/attendees/RgYxBRnnbtPEkd8oGTb7wQ1a0Lp1 \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "token": "mobile-1",
+      "value": "abc123xyz"
+    },
+    {
+      "value": "def456uvw",
+      "token": "mobile-2"
+    }
+  ]'
+```

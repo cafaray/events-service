@@ -15,6 +15,8 @@ IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
 SECRET_NAME="firebase-credentials"
 SERVICE_ACCOUNT="343004725643-compute@developer.gserviceaccount.com"
 
+gcloud config set project ${PROJECT_ID}
+
 STARTTIME=`date +%s`
 echo "***   `date`: Starting Cloud Run deployment script."
 

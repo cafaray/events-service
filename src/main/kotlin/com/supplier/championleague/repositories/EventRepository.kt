@@ -20,7 +20,8 @@ import kotlin.collections.plus
 class EventRepository (
     private val venueSearchPosRepository: VenueSearchPosRepository, 
     private val eventMatchRepository: EventMatchRepository,
-    private val eventSongRepository: EventSongRepository){
+    private val eventSongRepository: EventSongRepository,
+    private val eventQueryRepository: EventQueryRepository,){
 
     private val db: Firestore = FirestoreClient.getFirestore()
     
@@ -120,11 +121,22 @@ class EventRepository (
                 ))
             }            
         }
-        /* 
         if (EventType.QUERY.toString() == type || type == null) {
             println("Querying by type: $type")
-            return getEventQuery(date ?: "", status ?: "", name ?: "")
-        } 
+            var queries = eventQueryRepository.getEventQueries(name, date, status, ROW_LIMIT, ROW_OFFSET)
+            queries?.forEach{
+                data.add(mutableMapOf(
+                    "id" to it["id"] as String,
+                    "type" to EventType.QUERY.toString(),
+                    "name" to it["name"] as String,
+                    "date" to it["date"] as String,
+                    "description" to (it["description"] as? String ?: ""),
+                    "status" to it["status"] as String,
+                    "details" to (it["events"] ?: emptyList<Any>())
+                ))
+            }
+        }
+        /* 
         if(EventType.CAST.toString() == type || type == null){
             println("Querying by type: $type")
             return getEventCast(date ?: "", status ?: "", name ?: "")
