@@ -27,7 +27,7 @@ jobs:
     - name: Show Java & Maven versions
       run: | 
         java -version
-        mvn -version || ./events-service/mvnw -v 
+        mvn -version || ./mvnw -v 
     
     - name: Build and package
       working-directory: ./ # events-service      
