@@ -37,7 +37,7 @@ jobs:
 
     - name: Build and package
       working-directory: ./events-service
-      run: ./mvnw clean package
+      run: ./mvn clean package
 
     - name: Build Docker image
       working-directory: ./events-service
