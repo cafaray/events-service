@@ -8,8 +8,8 @@ env:
   PROJECT_ID: phonic-altar-450817-q4
   SERVICE_NAME: events-service
   REGION: europe-southwest1
-  IMAGE_NAME: europe-southwest1-docker.pkg.dev/phonic-altar-450817-q4/events-service
-  # IMAGE_NAME: gcr.io/phonic-altar-450817-q4/events-service
+  REPOSITORY: events-service
+  IMAGE_NAME: europe-southwest1-docker.pkg.dev/phonic-altar-450817-q4/events-service/events-service
 
 jobs:
   deploy:
@@ -24,19 +24,13 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    
-    - name: Show Java & Maven versions
-      run: | 
-        java -version
-        mvn -version
-    
+
     - name: Build and package
-      working-directory: ./ # events-service      
       run: |
-        sudo apt-get update 
-        sudo apt-get install -y maven 
+        sudo apt-get update
+        sudo apt-get install -y maven
         mvn -B -f pom.xml clean package
-      
+
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
@@ -45,22 +39,18 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Configure Docker for GCR
+    - name: Configure Docker for Artifact Registry
       run: |
         gcloud auth configure-docker europe-southwest1-docker.pkg.dev
-        # gcloud auth configure-docker us-docker.pkg.dev
-        # gcloud auth configure-docker us.gcr.io
-        # gcloud auth configure-docker
 
     - name: Build Docker image
-      working-directory: ./ # events-service
       run: |
         docker build \
           -f src/main/docker/Dockerfile.jvm \
           --platform=linux/amd64 \
           -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
 
-    - name: Push to Container Registry
+    - name: Push to Artifact Registry
       run: docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
     - name: Deploy to Cloud Run
