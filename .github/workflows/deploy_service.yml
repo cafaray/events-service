@@ -36,8 +36,11 @@ jobs:
       run: gcloud auth configure-docker
 
     - name: Build and package
-      # working-directory: ./events-service
-      run: ./mvn clean package
+      working-directory: ./ # events-service      
+      run: |
+        pwd
+        ls
+        ./mvnw clean package
 
     - name: Build Docker image
       working-directory: ./events-service
