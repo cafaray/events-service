@@ -47,7 +47,8 @@ jobs:
 
     - name: Configure Docker for GCR
       run: |
-        gcloud auth configure-docker us-docker.pkg.dev
+        gcloud auth configure-docker europe-southwest1-docker.pkg.dev
+        # gcloud auth configure-docker us-docker.pkg.dev
         # gcloud auth configure-docker us.gcr.io
         # gcloud auth configure-docker
 
