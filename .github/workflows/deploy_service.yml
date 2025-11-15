@@ -8,7 +8,7 @@ env:
   PROJECT_ID: phonic-altar-450817-q4
   SERVICE_NAME: events-service
   REGION: europe-southwest1
-  IMAGE_NAME: us-docker.pkg.dev/phonic-altar-450817-q4/events-service
+  IMAGE_NAME: europe-southwest1-docker.pkg.dev/phonic-altar-450817-q4/events-service
   # IMAGE_NAME: gcr.io/phonic-altar-450817-q4/events-service
 
 jobs:
