@@ -18,7 +18,7 @@ data class EventMatchDetailed (
     @JsonProperty("status") val status: String? = null,
     @JsonProperty("time_ending") val time_ending: String? = null,
     @JsonProperty("time_starting") val time_starting: String? = null,
-    @JsonProperty("type") val type: String? = null,
+    @JsonProperty("type") val type: String? = "MATCH",
     @JsonProperty("team_id_local") val team_id_local: String? = null,
     @JsonProperty("events") val events: ArrayList<Map<String, Any>>? = null
     

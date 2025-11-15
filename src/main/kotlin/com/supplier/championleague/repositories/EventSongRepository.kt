@@ -7,6 +7,7 @@ import com.google.firebase.cloud.FirestoreClient
 import com.supplier.championleague.model.EventType
 import jakarta.enterprise.context.ApplicationScoped
 import main.kotlin.com.supplier.championleague.model.EventSong
+import main.kotlin.com.supplier.championleague.model.Attendee
 import main.kotlin.com.supplier.championleague.model.toMap
 import java.time.LocalDate
 
@@ -123,6 +124,28 @@ class EventSongRepository {
             return -1
         }
         return startAt - currentTimestamp        
+    }
+
+    fun saveAttendee(eventSongId: String, userId: String, details: ArrayList<Map<String, Any>>): String? {
+        val attendeesCollection = eventSongCollection.document(eventSongId).collection("attendees")
+        val userRef = db.collection("users").document(userId)
+        
+        val attendee = Attendee(
+            id = userId,
+            confirmed_at = System.currentTimeMillis(),
+            recorded = false,
+            details =details
+        )
+        
+        val attendeeData = mapOf(
+            "id" to userRef,
+            "confirmedAt" to attendee.confirmed_at,
+            "recorded" to attendee.recorded,
+            "details" to attendee.details
+        )
+        
+        attendeesCollection.document(userId).set(attendeeData).get()
+        return userId
     }
 
 }
