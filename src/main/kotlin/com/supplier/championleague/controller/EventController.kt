@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
@@ -169,6 +170,116 @@ class EventController (
             Response.status(400).entity(mapOf("error" to e.message)).build()
         } catch (e: Exception) {
             Response.status(500).entity(mapOf("error" to "Internal server error")).build()
+        }
+    }
+
+    @POST
+    @Path("/queries/{eventQueryId}/attendees/{userId}")
+    fun saveEventQueryAttendee(
+        @PathParam("eventQueryId") eventQueryId: String,
+        @PathParam("userId") userId: String
+    ): Response {
+        return try {
+            if (eventQueryId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid eventQueryId")).build()
+            }
+            if (userId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid userId")).build()
+            }
+                    
+            val result = eventService.saveEventQueryAttendee(eventQueryId, userId)
+            if (result != null) {
+                Response.status(201).entity(mapOf("message" to "Event query attendee saved successfully", "id" to result)).build()
+            } else {
+                Response.status(404).entity(mapOf("error" to "Event query not found")).build()
+            }
+        } catch (e: IllegalArgumentException) {
+            Response.status(400).entity(mapOf("error" to e.message)).build()
+        } catch (e: Exception) {
+            Response.status(500).entity(mapOf("error" to "Internal server error")).build()
+        }
+    }
+
+    @PUT
+    @Path("/queries/{eventQueryId}/attendees/{userId}/answers")
+    fun saveEventQueryAnswers(
+        @PathParam("eventQueryId") eventQueryId: String,
+        @PathParam("userId") userId: String,
+        answers: List<Map<String, Any>>
+    ): Response {
+        return try {
+            if (eventQueryId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid eventQueryId")).build()
+            }
+            if (userId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid userId")).build()
+            }
+            
+            val result = eventService.saveEventQueryAnswers(eventQueryId, userId, answers)
+            if (result != null) {
+                Response.status(200).entity(mapOf("message" to "Answers saved successfully", "id" to result)).build()
+            } else {
+                Response.status(404).entity(mapOf("error" to "Event query attendee not found")).build()
+            }
+        } catch (e: IllegalArgumentException) {
+            Response.status(400).entity(mapOf("error" to e.message)).build()
+        } catch (e: Exception) {
+            Response.status(500).entity(mapOf("error" to "Internal server error")).build()
+        }
+    }
+
+    @POST
+    @Path("/matches/{eventMatchId}/attendees/{userId}")
+    fun saveEventMatchAttendee(
+        @PathParam("eventMatchId") eventMatchId: String,
+        @PathParam("userId") userId: String,
+        geoposition: Map<String, Any>
+    ): Response {
+        return try {
+            if (eventMatchId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid eventMatchId")).build()
+            }
+            if (userId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid userId")).build()
+            }
+            
+            val result = eventService.saveEventMatchAttendee(eventMatchId, userId, geoposition)
+            if (result != null) {
+                Response.status(201).entity(mapOf("message" to "Event match attendee saved successfully", "id" to result)).build()
+            } else {
+                Response.status(404).entity(mapOf("error" to "Event match not found")).build()
+            }
+        } catch (e: IllegalArgumentException) {
+            Response.status(400).entity(mapOf("error" to e.message)).build()
+        } catch (e: Exception) {
+            Response.status(500).entity(mapOf("error" to "Internal server error")).build()
+        }
+    }
+
+    @PUT
+    @Path("/matches/{eventMatchId}/attendees/{userId}/details")
+    fun updateEventMatchAttendeeDetails(
+        @PathParam("eventMatchId") eventMatchId: String,
+        @PathParam("userId") userId: String,
+        geoposition: Map<String, Any>
+    ): Response {
+        return try {
+            if (eventMatchId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid eventMatchId")).build()
+            }
+            if (userId.isBlank()) {
+                return Response.status(400).entity(mapOf("error" to "Invalid userId")).build()
+            }
+            if (geoposition.isEmpty()) {
+                return Response.status(400).entity(mapOf("error" to "Geoposition data is required")).build()
+            }
+            
+            val result = eventService.updateEventMatchAttendeeDetails(eventMatchId, userId, geoposition)
+            Response.status(200).entity(mapOf("message" to "Attendee details updated successfully", "id" to result)).build()
+        } catch (e: IllegalArgumentException) {
+            Response.status(400).entity(mapOf("error" to e.message)).build()
+        } catch (e: Exception) {
+            Response.status(500).entity(mapOf("error" to "Internal server error: ${e.message}")).build()
         }
     }
 

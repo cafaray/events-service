@@ -114,17 +114,67 @@ Refer to the [Champion League API documentation](./api/README.md) for informatio
 
 - `GET /v1/events`
   - Get all events
+  - Query parameters: `type`, `name`, `date`, `status`, `lat`, `long`
   - Response: Array of event objects
 
-- `GET /v1/events/inqueries`
-  - Search events by location and date
-  - Query parameters:
-    - `lat`: Latitude (optional)
-    - `long`: Longitude (optional)
-    - `date`: Date (optional)
-    - `limit`: Maximum results (optional)
-    - `offset`: Result offset (optional)
-  - Response: Array of event objects or 404 if not found
+- `GET /v1/events/{type}`
+  - Get events by type (matchs, songs, casts, queries)
+  - Query parameters: `name`, `date`, `status`, `lat`, `long`
+  - Response: Array of event objects
+
+- `GET /v1/events/{type}/{event_id}`
+  - Get specific event by type and ID
+  - Response: Event object or 404 if not found
+
+- `GET /v1/events/queries`
+  - Get all event queries
+  - Query parameters: `name`, `date`, `status`, `limit`, `offset`
+  - Response: Array of event query objects
+
+- `GET /v1/events/queries/{uid}`
+  - Get event query by ID
+  - Response: Event query object or 404 if not found
+
+- `GET /v1/events/queries/{uid}/details`
+  - Get event query details with questionnaire
+  - Response: Event query details or 404 if not found
+
+- `GET /v1/events/songs`
+  - Get all event songs
+  - Query parameters: `name`, `date`, `status`
+  - Response: Array of event song objects
+
+- `GET /v1/events/songs/{eventSongId}`
+  - Get event song by ID
+  - Response: Event song object or 404 if not found
+
+- `POST /v1/events/songs/{eventSongId}/attendees/{userId}`
+  - Save event song attendee
+  - Request body: Array of detail objects with token
+  - Response: Success message with attendee ID
+
+- `POST /v1/events/queries/{eventQueryId}/attendees/{userId}`
+  - Save event query attendee
+  - Response: Success message with attendee ID
+
+- `PUT /v1/events/queries/{eventQueryId}/attendees/{userId}/answers`
+  - Save event query answers
+  - Request body: Array of answer objects with questionId and answer
+  - Response: Success message with attendee ID
+
+- `POST /v1/events/matches/{eventMatchId}/attendees/{userId}`
+  - Save event match attendee
+  - Request body: Geoposition object with lat, lng, accuracy
+  - Response: Success message with attendee ID
+
+- `PUT /v1/events/matches/{eventMatchId}/attendees/{userId}/details`
+  - Update event match attendee details
+  - Request body: Geoposition object with lat, lng, accuracy
+  - Response: Success message with attendee ID
+
+- `GET /v1/events/inqueries` (deprecated)
+  - Use `/v1/events` instead
+  - Response: 407 Proxy Authentication Required
 
 ### Venues
 
@@ -142,6 +192,7 @@ Refer to the [Champion League API documentation](./api/README.md) for informatio
 ### Response Format
 
 All endpoints return JSON responses with the following status codes:
+
 - 200: Success
 - 400: Bad Request (invalid input)
 - 401: Unauthorized (invalid token)
@@ -236,4 +287,53 @@ curl -X POST \
       "token": "mobile-2"
     }
   ]'
+```
+
+```bash 
+curl -X POST \
+  http://localhost:8080/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
+  -H "Content-Type: application/json" 
+```
+
+```bash
+curl -X PUT \
+  http://localhost:8080/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/answers \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "questionId": "q1",
+      "answer": "Real Madrid"
+    },
+    {
+      "questionId": "q2", 
+      "answer": true
+    },
+    {
+      "questionId": "q3",
+      "answer": "a"
+    }
+  ]'
+``` 
+
+
+```bash
+curl -X POST \
+  http://localhost:8080/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lat": 41.3809,
+    "lng": 2.1202449,
+    "accuracy": 10.5
+  }'
+```
+
+```bash
+curl -X PUT \
+  http://localhost:8080/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/details \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lat": 41.3809,
+    "lng": 2.1202449,
+    "accuracy": 10.5
+  }'
 ```

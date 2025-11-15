@@ -14,12 +14,16 @@ import com.supplier.championleague.model.Question
 import com.supplier.championleague.model.QuestionType
 import com.supplier.championleague.model.QuestionClass
 import javax.print.Doc
+import main.kotlin.com.supplier.championleague.model.Attendee
 
 @ApplicationScoped
 class EventQueryRepository {
 
     private val db: Firestore = FirestoreClient.getFirestore()
     private val eventQueryCollection = db.collection("event_query")
+    private val COLLECTION_ATTENDEES: String = "attendees"
+    private val COLLECTION_USERS: String = "users"
+
 
     fun getEventQueries(name: String?, date: String?, status: String?, limit: Int? = 25, offset: Int? = 1): ArrayList<Map<String, Any>>? {
         println("Starting queryEventQueries with search params:")
@@ -162,5 +166,45 @@ class EventQueryRepository {
             )
         }
         return null
+    }
+
+    fun saveEventQueryAttendee(
+        eventQueryId: String,
+        userId: String
+    ): String? {
+        val timestamp = System.currentTimeMillis()
+        val recorded = false
+        val attendeeData = mapOf(
+            "id" to db.collection(COLLECTION_USERS).document(userId),
+            "confirmedAt" to timestamp,
+            "recorded" to recorded
+        )
+        
+        val docRef = eventQueryCollection
+            .document(eventQueryId)
+            .collection(COLLECTION_ATTENDEES)
+            .document(userId)
+            .set(attendeeData)
+            .get()
+        
+        return userId
+    }
+
+    fun saveEventQueryAnswers(
+        eventQueryId: String,
+        userId: String,
+        answers: List<Map<String, Any>>
+    ): String? {
+        val attendeeDoc = eventQueryCollection
+            .document(eventQueryId)
+            .collection(COLLECTION_ATTENDEES)
+            .document(userId)
+        
+        val updateData = mapOf(
+            "details" to answers
+        )
+        
+        attendeeDoc.update(updateData).get()
+        return userId
     }
 }

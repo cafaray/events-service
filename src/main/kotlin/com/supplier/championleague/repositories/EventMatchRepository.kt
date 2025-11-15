@@ -8,12 +8,24 @@ import jakarta.enterprise.context.ApplicationScoped
 import main.kotlin.com.supplier.championleague.model.EventMatch
 import main.kotlin.com.supplier.championleague.model.TeamSimple
 import main.kotlin.com.supplier.championleague.model.toMap
+import main.kotlin.com.supplier.championleague.model.Attendee
 
 @ApplicationScoped
 class EventMatchRepository {
 
     private val db: Firestore = FirestoreClient.getFirestore()
     private val eventMatchCollection = db.collection("event_match")
+    private val COLLECTION_ATTENDEES: String = "attendees"
+    private val COLLECTION_USERS: String = "users"
+
+    private fun createDetailsMap(geoposition: Map<String, Any>): Map<String, Any> {
+        return mapOf(
+            "accuracy" to (geoposition["accuracy"] ?: 0),
+            "lat" to (geoposition["lat"] ?: 0.0),
+            "lng" to (geoposition["lng"] ?: 0.0),
+            "timestamp" to System.currentTimeMillis()
+        )
+    }
 
     fun getEventMatches(): ArrayList<Map<String, Any>>? {
         val matchSnapshot = eventMatchCollection.get().get()
@@ -92,28 +104,48 @@ class EventMatchRepository {
         return if(snapshot.size()>0) list else null
     }
 
-    /*
-    // use `suspend fun ....` when you need a subroutine
-    fun getEventMatchDetailed(eventMatchId: String): Map<String, Any>? {
-        val eventMatchDoc = eventMatchCollection.document(eventMatchId).get().get()
-        if (!eventMatchDoc.exists()) return null
-        val eventMatchData = eventMatchDoc.data ?: return null
-        val venueData = (matchData["venue"] as DocumentReference).get().get().data
-        val leagueData = (matchData["league"] as DocumentReference).get().get().data
-        val teamLocal =  (matchData["team_local"] as DocumentReference).get().get() // .data
-        val teamSimpleLocal = teamLocal.toObject(TeamSimple::class.java)
-        val teamVisitor =  (matchData["team_visitor"] as DocumentReference).get().get() // .data
-        val teamSimpleVisitor = teamVisitor.toObject(TeamSimple::class.java)
-        return if (venueData!=null && leagueData!=null && teamSimpleLocal!=null && teamSimpleVisitor!=null) {
-            (matchData
-                + ("venue" to venueData)
-                + ("league" to leagueData)
-                + ("team_local" to teamSimpleLocal)
-                + ("team_visitor" to teamSimpleVisitor)
-            )
-        }else {
-            return matchData
-        }
+    fun saveEventMatchAttendee(
+        eventMatchId: String,
+        userId: String,
+        geoposition: Map<String, Any>
+    ): String? {
+        val attendeeData = mapOf(
+            "id" to db.collection(COLLECTION_USERS).document(userId),
+            "confirmedAt" to System.currentTimeMillis(),
+            "recorded" to false,
+            "details" to arrayListOf(createDetailsMap(geoposition))
+        )
+        
+        eventMatchCollection
+            .document(eventMatchId)
+            .collection(COLLECTION_ATTENDEES)
+            .document(userId)
+            .set(attendeeData)
+            .get()
+        
+        return userId
     }
-    */
+
+    fun updateEventMatchAttendeeDetails(
+        eventMatchId: String,
+        userId: String,
+        geoposition: Map<String, Any>
+    ): String? {
+        val attendeeRef = eventMatchCollection
+            .document(eventMatchId)
+            .collection(COLLECTION_ATTENDEES)
+            .document(userId)
+        
+        val attendeeDoc = attendeeRef.get().get()
+        if (!attendeeDoc.exists()) {
+            return null
+        }
+        
+        val currentDetails = attendeeDoc.get("details") as? ArrayList<Map<String, Any>> ?: arrayListOf()
+        currentDetails.add(createDetailsMap(geoposition))
+        
+        attendeeRef.update("details", currentDetails).get()
+        
+        return userId
+    }
 }
