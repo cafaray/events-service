@@ -8,7 +8,8 @@ env:
   PROJECT_ID: phonic-altar-450817-q4
   SERVICE_NAME: events-service
   REGION: europe-southwest1
-  IMAGE_NAME: gcr.io/phonic-altar-450817-q4/events-service
+  IMAGE_NAME: us-docker.pkg.dev/phonic-altar-450817-q4/events-service
+  # IMAGE_NAME: gcr.io/phonic-altar-450817-q4/events-service
 
 jobs:
   deploy:
@@ -46,9 +47,9 @@ jobs:
 
     - name: Configure Docker for GCR
       run: |
-        # gcloud auth configure-docker us-docker.pkg.dev
+        gcloud auth configure-docker us-docker.pkg.dev
         # gcloud auth configure-docker us.gcr.io
-        gcloud auth configure-docker
+        # gcloud auth configure-docker
 
     - name: Build Docker image
       working-directory: ./ # events-service
