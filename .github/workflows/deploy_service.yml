@@ -38,9 +38,10 @@ jobs:
     - name: Build and package
       working-directory: ./ # events-service      
       run: |
-        pwd
-        ls
-        ./mvnw clean package
+        sudo apt-get update 
+        sudo apt-get install -y maven 
+        mvn -B clean package
+        # ./mvnw clean package
 
     - name: Build Docker image
       working-directory: ./events-service
