@@ -255,27 +255,27 @@ If you want to learn more about building native executables, please consult <htt
 
 ## Code Example
 
+> Geoposition Camp Nou: long=2.1202395&lat=41.3809&maxDistance=1000
+
 ### REST invokation using `curl`
 
 ```shell script
 export BASE_URL=http://localhost:8080
-export BASE_URL_REMOTE=http://champion-league.e9bb0838-6437-45ef-847c-e04a5df6f617.k8s.civo.com
-# camp nou venue:
-curl -iv "${BASE_URL}/events/inqueries?lat=2.1202449&long=41.3809&date=2025-04-30"
+export BASE_URL_REMOTE=https://events-service-343004725643.europe-southwest1.run.app
 ```
 
-```shell script
-# no camp venue:
-curl -iv 'http://localhost:8080/events/inqueries?lat=2.1078&long=41.5469&date=2025-04-30'
-```
+Look for the camp nou venue:
 
-### Test data
+`curl -iv "${BASE_URL}/events?lat=2.1202449&long=41.3809&date=2025-04-30"`
 
-Camp Nou: long=2.1202395&lat=41.3809&maxDistance=1000
+outside the camp venue:
+`curl -iv '${BASE_URL}/events/inqueries?lat=2.1078&long=41.5469&date=2025-04-30'`
+
+#### Events call examples.
 
 ```bash
 curl -X POST \
-  http://localhost:8080/v1/events/songs/Jryl1EqgyGSqZqilowPX/attendees/RgYxBRnnbtPEkd8oGTb7wQ1a0Lp1 \
+  ${BASE_URL}/v1/events/songs/Jryl1EqgyGSqZqilowPX/attendees/RgYxBRnnbtPEkd8oGTb7wQ1a0Lp1 \
   -H "Content-Type: application/json" \
   -d '[
     {
@@ -291,13 +291,13 @@ curl -X POST \
 
 ```bash 
 curl -X POST \
-  http://localhost:8080/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
+  ${BASE_URL}/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
   -H "Content-Type: application/json" 
 ```
 
 ```bash
 curl -X PUT \
-  http://localhost:8080/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/answers \
+  ${BASE_URL}/v1/events/queries/I6SCGuMsEUtgriBdtGpf/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/answers \
   -H "Content-Type: application/json" \
   -d '[
     {
@@ -318,7 +318,7 @@ curl -X PUT \
 
 ```bash
 curl -X POST \
-  http://localhost:8080/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
+  ${BASE_URL}/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1 \
   -H "Content-Type: application/json" \
   -d '{
     "lat": 41.3809,
@@ -329,7 +329,7 @@ curl -X POST \
 
 ```bash
 curl -X PUT \
-  http://localhost:8080/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/details \
+  ${BASE_URL}/v1/events/matches/XkelrOoCbYtZtxrtiaUh/attendees/PmosEhu3uHeImHxBXv2EhEVvOng1/details \
   -H "Content-Type: application/json" \
   -d '{
     "lat": 41.3809,
