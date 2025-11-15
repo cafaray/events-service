@@ -39,6 +39,10 @@ class FirebaseConfig {
             try {
                 val credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
                     ?: throw IllegalStateException("GOOGLE_APPLICATION_CREDENTIALS is not set!")
+                // Validate the credentials path to prevent path traversal or absolute path usage.
+                if (credentialsPath.contains("..") || credentialsPath.contains("/") || credentialsPath.contains("\\")) {
+                    throw IllegalArgumentException("Invalid credentials path: possible path traversal or directory separator detected.")
+                }
                 println("*  credentialsPath: $credentialsPath \n*  projectId: $firebaseProjectId")
                 // val pgBouncerSupporterUri = System.getenv("PGBOUNCER_SUPPORTER_URI")
                 //    ?: throw IllegalStateException("PGBOUNCER_SUPPORTER_URI is not set!")
