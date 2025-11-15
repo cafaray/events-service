@@ -194,7 +194,7 @@
         <!-- <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory> -->
         <plugins>
             <plugin>
-                <groupId>${quarkus.platform.group-id}</groupId>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <version>${quarkus.platform.version}</version>
                 <extensions>true</extensions>
