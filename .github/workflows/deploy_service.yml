@@ -36,15 +36,21 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        # credentials_json: ${{ secrets.GCP_SA_KEY }}
-        credentials_json: ${{ secrets.GCP_MINE_KEY }}
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        # credentials_json: ${{ secrets.GCP_MINE_KEY }}
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
     - name: Configure Docker for Artifact Registry
       run: |
-        gcloud auth configure-docker ${{ env.REPOSITORY }}
+        gcloud auth configure-docker ${{ env.REPOSITORY }}        
+
+    - name: List Artifact Registry repositories
+      run: |
+        gcloud artifacts repositories list \
+          --project=${{ env.PROJECT_ID }} \
+          --format="table(name, format, location, description)"
 
     - name: Build Docker image
       run: |
