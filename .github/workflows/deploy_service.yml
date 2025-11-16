@@ -8,7 +8,10 @@ env:
   PROJECT_ID: phonic-altar-450817-q4
   SERVICE_NAME: events-service
   REGION: europe-west1
-  IMAGE_NAME: europe-west1-docker.pkg.dev/phonic-altar-450817-q4/gcf-artifacts/events-service
+  # REPOSITORY: europe-west1-docker.pkg.dev
+  # REPOSITORY: europe-southwest1-docker.pkg.dev
+  REPOSITORY: gcr.io
+  IMAGE_NAME: ${{ env.REPOSITORY }}/phonic-altar-450817-q4/gcf-artifacts/events-service
 
 jobs:
   deploy:
@@ -41,10 +44,11 @@ jobs:
 
     - name: Configure Docker for Artifact Registry
       run: |
-        gcloud auth configure-docker europe-west1-docker.pkg.dev
+        gcloud auth configure-docker ${{ env.REPOSITORY }}
 
     - name: Build Docker image
       run: |
+        echo ${{ env.IMAGE_NAME }}
         docker build \
           -f src/main/docker/Dockerfile.jvm \
           --platform=linux/amd64 \
