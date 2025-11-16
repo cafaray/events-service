@@ -11,7 +11,7 @@ env:
   # REPOSITORY: europe-west1-docker.pkg.dev
   # REPOSITORY: europe-southwest1-docker.pkg.dev
   REPOSITORY: gcr.io
-  IMAGE_NAME: ${{ env.REPOSITORY }}/phonic-altar-450817-q4/gcf-artifacts/events-service
+  IMAGE_NAME: gcr.io/phonic-altar-450817-q4/events-service
 
 jobs:
   deploy:
